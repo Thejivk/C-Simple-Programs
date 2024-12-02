@@ -1,0 +1,147 @@
+using System;
+
+namespace SimpleBankingSystem
+{
+    // Customer Class
+    class Customer
+    {
+        // Fields (Encapsulation)
+        private string name;
+        private string accountNumber;
+        private double balance;
+
+        // Constructor
+        public Customer(string name, string accountNumber, double initialDeposit)
+        {
+            this.name = name;
+            this.accountNumber = accountNumber;
+            this.balance = initialDeposit;
+        }
+
+        // Properties (Encapsulation)
+        public string Name => name;
+        public string AccountNumber => accountNumber;
+        public double Balance => balance;
+
+        // Methods
+        public void Deposit(double amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Deposit amount must be positive.");
+            balance += amount;
+            Console.WriteLine($"Deposit successful! New balance: {balance:C}");
+        }
+
+        public void Withdraw(double amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Withdrawal amount must be positive.");
+            if (amount > balance)
+                throw new InvalidOperationException("Insufficient balance.");
+            balance -= amount;
+            Console.WriteLine($"Withdrawal successful! New balance: {balance:C}");
+        }
+
+        public void DisplayDetails()
+        {
+            Console.WriteLine($"\nCustomer Name: {name}");
+            Console.WriteLine($"Account Number: {accountNumber}");
+            Console.WriteLine($"Balance: {balance:C}");
+        }
+    }
+
+    // Main Program
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Variables and Constants
+            const double MIN_INITIAL_DEPOSIT = 100.0;
+            double depositAmount;
+            double withdrawalAmount;
+
+            Console.WriteLine("Welcome to Simple Banking System!");
+
+            // Taking Input
+            Console.Write("Enter your name: ");
+            string customerName = Console.ReadLine();
+
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine();
+
+            Console.Write($"Enter initial deposit (minimum {MIN_INITIAL_DEPOSIT:C}): ");
+            double initialDeposit = Convert.ToDouble(Console.ReadLine());
+
+            // Input Validation
+            if (initialDeposit < MIN_INITIAL_DEPOSIT)
+            {
+                Console.WriteLine($"Initial deposit must be at least {MIN_INITIAL_DEPOSIT:C}.");
+                return;
+            }
+
+            // Create a Customer Object
+            Customer customer = new Customer(customerName, accountNumber, initialDeposit);
+
+            // Menu for Banking Operations
+            while (true)
+            {
+                Console.WriteLine("\n---- Banking Menu ----");
+                Console.WriteLine("1. Deposit");
+                Console.WriteLine("2. Withdraw");
+                Console.WriteLine("3. Display Details");
+                Console.WriteLine("4. Exit");
+                Console.Write("Choose an option: ");
+
+                int choice;
+                bool isValidChoice = int.TryParse(Console.ReadLine(), out choice);
+
+                if (!isValidChoice)
+                {
+                    Console.WriteLine("Invalid choice! Please enter a number.");
+                    continue;
+                }
+
+                switch (choice)
+                {
+                    case 1: // Deposit
+                        Console.Write("Enter deposit amount: ");
+                        depositAmount = Convert.ToDouble(Console.ReadLine());
+                        try
+                        {
+                            customer.Deposit(depositAmount);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                        break;
+
+                    case 2: // Withdraw
+                        Console.Write("Enter withdrawal amount: ");
+                        withdrawalAmount = Convert.ToDouble(Console.ReadLine());
+                        try
+                        {
+                            customer.Withdraw(withdrawalAmount);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                        break;
+
+                    case 3: // Display Details
+                        customer.DisplayDetails();
+                        break;
+
+                    case 4: // Exit
+                        Console.WriteLine("Thank you for using Simple Banking System!");
+                        return;
+
+                    default:
+                        Console.WriteLine("Invalid choice! Please choose a valid option.");
+                        break;
+                }
+            }
+        }
+    }
+}
